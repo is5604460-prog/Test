@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Split Finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#16171a;
+    --surface:#1f2124;
+    --surface2:#26292d;
+    --chalk:#EDEAE3;
+    --chalk-dim:#9a9c9f;
+    --iron:#4b4e54;
+    --yellow:#E8B923;
+    --rust:#C1443C;
+    --line:#33363b;
+    --radius:14px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(232,185,35,0.06), transparent 45%),
+      var(--bg);
+    color:var(--chalk);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding-bottom:60px;
+  }
+  .wrap{max-width:640px; margin:0 auto; padding:20px 16px 0;}
+
+  /* HERO */
+  header{padding:28px 0 18px; border-bottom:1px solid var(--line);}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em;
+    color:var(--yellow); text-transform:uppercase; margin-bottom:8px;
+  }
+  h1{
+    font-family:'Oswald',sans-serif; font-weight:700; text-transform:uppercase;
+    font-size:34px; letter-spacing:.01em; margin:0 0 6px; line-height:1.02;
+  }
+  h1 span{color:var(--yellow);}
+  .sub{color:var(--chalk-dim); font-size:14.5px; max-width:46ch; line-height:1.5;}
+
+  /* SEARCH */
+  .search-row{display:flex; gap:8px; margin-top:20px;}
+  #splitInput{
+    flex:1; background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    color:var(--chalk); font-family:'Inter',sans-serif; font-size:16px; padding:14px 14px;
+    outline:none;
+  }
+  #splitInput:focus{border-color:var(--yellow);}
+  #splitInput::placeholder{color:var(--chalk-dim);}
+  #goBtn{
+    background:var(--yellow); color:#1a1704; border:none; border-radius:10px;
+    font-family:'Oswald',sans-serif; font-weight:600; text-transform:uppercase; letter-spacing:.03em;
+    font-size:14px; padding:0 20px; cursor:pointer;
+  }
+  #goBtn:active{transform:scale(0.97);}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px;}
+  .chip{
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--chalk-dim);
+    border:1px solid var(--line); border-radius:20px; padding:6px 11px; cursor:pointer; background:none;
+  }
+  .chip:active{border-color:var(--yellow); color:var(--yellow);}
+
+  /* STATUS */
+  #status{margin:22px 0; font-size:13.5px; color:var(--chalk-dim); display:none;}
+  #status.show{display:block;}
+  .spinner{
+    display:inline-block; width:14px; height:14px; border:2px solid var(--iron);
+    border-top-color:var(--yellow); border-radius:50%; animation:spin .7s linear infinite;
+    vertical-align:-2px; margin-right:8px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* RESULT HEADER */
+  #resultMeta{display:none; margin-top:26px;}
+  #resultMeta.show{display:block;}
+  .split-name{font-family:'Oswald',sans-serif; font-size:22px; text-transform:uppercase; margin:0 0 4px;}
+  .split-freq{color:var(--chalk-dim); font-size:13px; margin-bottom:16px;}
+  .note{
+    font-size:12.5px; color:var(--yellow); background:rgba(232,185,35,0.08);
+    border:1px solid rgba(232,185,35,0.25); border-radius:8px; padding:8px 12px; margin-bottom:16px;
+  }
+
+  /* PLATE RACK (day tabs) */
+  .rack{display:flex; gap:10px; overflow-x:auto; padding:4px 2px 8px; scrollbar-width:none;}
+  .rack::-webkit-scrollbar{display:none;}
+  .plate{
+    flex:0 0 auto; width:58px; height:58px; border-radius:50%; border:3px solid var(--iron);
+    background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center;
+    cursor:pointer; transition:.15s;
+  }
+  .plate .n{font-family:'Oswald',sans-serif; font-weight:700; font-size:17px; line-height:1;}
+  .plate .g{font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--chalk-dim); margin-top:2px; text-transform:uppercase;}
+  .plate.active{border-color:var(--yellow); background:rgba(232,185,35,0.12); transform:scale(1.08);}
+  .plate.active .g{color:var(--yellow);}
+
+  /* DAY PANEL */
+  .day-title{font-family:'Oswald',sans-serif; font-size:20px; text-transform:uppercase; margin:18px 0 2px;}
+  .day-groups{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--yellow); text-transform:uppercase; letter-spacing:.05em; margin-bottom:16px;}
+
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    margin-bottom:14px; overflow:hidden;
+  }
+  .card-media{
+    position:relative; width:100%; aspect-ratio:4/3; background:#0e0f11;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .card-media img{width:100%; height:100%; object-fit:contain; position:absolute; top:0; left:0; opacity:0; transition:opacity .35s ease;}
+  .card-media img.show{opacity:1;}
+  .card-media .noimg{color:var(--chalk-dim); font-size:12px; font-family:'JetBrains Mono',monospace;}
+  .card-body{padding:14px 16px 16px;}
+  .card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .ex-name{font-family:'Oswald',sans-serif; font-size:16.5px; text-transform:uppercase; line-height:1.15;}
+  .ex-tag{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--rust); text-transform:uppercase; margin-top:3px;}
+  .ex-sets{
+    font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--bg); background:var(--yellow);
+    border-radius:6px; padding:4px 8px; white-space:nowrap; font-weight:700;
+  }
+  .ex-toggle{
+    margin-top:10px; font-size:12.5px; color:var(--chalk-dim); cursor:pointer; text-decoration:underline;
+    text-decoration-style:dotted; display:inline-block;
+  }
+  .ex-instr{
+    display:none; margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);
+    font-size:13px; line-height:1.55; color:var(--chalk-dim);
+  }
+  .ex-instr.show{display:block;}
+  .ex-instr ol{margin:0; padding-left:18px;}
+  .ex-instr li{margin-bottom:6px;}
+
+  footer{margin-top:30px; text-align:center; font-size:11px; color:var(--iron); font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Split Finder</div>
+    <h1>Забей <span>сплит</span> —<br>получи план</h1>
+    <div class="sub">Введи название тренировочного сплита — соберу расписание по дням, группам мышц и упражнениям с демонстрацией.</div>
+
+    <div class="search-row">
+      <input id="splitInput" type="text" placeholder="Например: PPL, Bro split, Arnold split..." autocomplete="off">
+      <button id="goBtn">Найти</button>
+    </div>
+    <div class="chips">
+      <button class="chip" data-v="PPL">PPL</button>
+      <button class="chip" data-v="Bro split">Bro split</button>
+      <button class="chip" data-v="Arnold split">Arnold split</button>
+      <button class="chip" data-v="Upper Lower">Upper/Lower</button>
+      <button class="chip" data-v="Full body">Full body</button>
+    </div>
+  </header>
+
+  <div id="status"><span class="spinner"></span><span id="statusText">Ищу упражнения...</span></div>
+
+  <div id="resultMeta">
+    <div class="split-name" id="splitName"></div>
+    <div class="split-freq" id="splitFreq"></div>
+    <div class="note" id="splitNote" style="display:none;"></div>
+    <div class="rack" id="rack"></div>
+    <div class="day-title" id="dayTitle"></div>
+    <div class="day-groups" id="dayGroups"></div>
+    <div id="cards"></div>
+  </div>
+
+  <footer>DATA · FREE-EXERCISE-DB (PUBLIC DOMAIN)</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var EX_JSON_URL = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json";
+  var IMG_BASE = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/";
+  var GOOD_EQUIPMENT = ["barbell","dumbbell","body only","machine","cable","kettlebells","bands","medicine ball","e-z curl bar"];
+
+  var exercisesDB = null; // raw array
+  var byMuscle = {};      // muscle -> [exercise,...]
+
+  // ---------- Split definitions ----------
+  var GROUPS = {
+    PUSH:   ["chest","shoulders","triceps"],
+    PULL:   ["lats","middle back","biceps","traps","lower back"],
+    LEGS:   ["quadriceps","hamstrings","glutes","calves","adductors","abductors"],
+    ARMS:   ["biceps","triceps","forearms"],
+    CHEST:  ["chest"],
+    BACK:   ["lats","middle back","lower back","traps"],
+    SHOULDERS: ["shoulders"],
+    ABS:    ["abdominals"],
+    UPPER:  ["chest","shoulders","triceps","lats","middle back","biceps","traps"],
+    FULL:   ["chest","lats","quadriceps","shoulders","hamstrings","abdominals","biceps"]
+  };
+
+  var SPLITS = {
+    ppl: {
+      label: "Push / Pull / Legs",
+      aliases: ["ppl","push pull legs","пуш пул легс","пуш/пул/легс","push pull","толкай тяни ноги"],
+      freq: "3–6 дней в неделю (цикл можно повторить дважды)",
+      days: [
+        {title:"Push (грудь · плечи · трицепс)", groups:GROUPS.PUSH},
+        {title:"Pull (спина · бицепс)", groups:GROUPS.PULL},
+        {title:"Legs (ноги)", groups:GROUPS.LEGS}
+      ]
+    },
+    bro: {
+      label: "Bro Split",
+      aliases: ["bro split","broscience","бро сплит","бро-сплит","broscplit"],
+      freq: "5 дней в неделю, каждая мышечная группа — 1 раз",
+      days: [
+        {title:"Грудь", groups:GROUPS.CHEST},
+        {title:"Спина", groups:GROUPS.BACK},
+        {title:"Плечи", groups:GROUPS.SHOULDERS},
+        {title:"Руки", groups:GROUPS.ARMS},
+        {title:"Ноги", groups:GROUPS.LEGS}
+      ]
+    },
+    arnold: {
+      label: "Arnold Split",
+      aliases: ["arnold","arnold split","арнольд","арнольд сплит","арнольд шварценеггер"],
+      freq: "6 дней в неделю (цикл из 3 дней ×2)",
+      days: [
+        {title:"Грудь + Спина", groups:GROUPS.CHEST.concat(GROUPS.BACK)},
+        {title:"Плечи + Руки", groups:GROUPS.SHOULDERS.concat(GROUPS.ARMS)},
+        {title:"Ноги", groups:GROUPS.LEGS}
+      ]
+    },
+    upperlower: {
+      label: "Upper / Lower",
+      aliases: ["upper lower","upper/lower","верх низ","аппер ловер","верх-низ"],
+      freq: "4 дня в неделю (2 цикла верх/низ)",
+      days: [
+        {title:"Upper (верх тела)", groups:GROUPS.UPPER},
+        {title:"Lower (низ тела)", groups:GROUPS.LEGS}
+      ]
+    },
+    fullbody: {
+      label: "Full Body",
+      aliases: ["full body","fullbody","фулбади","фулл боди","всё тело"],
+      freq: "3 дня в неделю через день",
+      days: [
+        {title:"Full Body A", groups:GROUPS.FULL},
+        {title:"Full Body B", groups:GROUPS.FULL.slice().reverse()}
+      ]
+    }
+  };
+
+  function normalize(s){
+    return (s||"").toLowerCase().trim().replace(/[^a-zа-я0-9\s]/gi,"").replace(/\s+/g," ");
+  }
+
+  function matchSplit(query){
+    var q = normalize(query);
+    if(!q) return {key:"ppl", exact:true};
+    var best = null, bestScore = 0;
+    Object.keys(SPLITS).forEach(function(key){
+      SPLITS[key].aliases.forEach(function(a){
+        var na = normalize(a);
+        if(q.indexOf(na) !== -1 || na.indexOf(q) !== -1){
+          var score = na.length;
+          if(score > bestScore){ bestScore = score; best = key; }
+        }
+      });
+    });
+    if(best) return {key:best, exact:true};
+
+    // keyword fallback scoring
+    var scores = {ppl:0, bro:0, arnold:0, upperlower:0, fullbody:0};
+    var kw = {
+      ppl:["push","pull","leg","толч","тяг","ног"],
+      bro:["bro","chest","back","shoulder","arm","грудь","спина","плеч","рук"],
+      arnold:["arnold","арнольд"],
+      upperlower:["upper","lower","верх","низ"],
+      fullbody:["full","body","фулл","полн","все тело"]
+    };
+    Object.keys(kw).forEach(function(k){
+      kw[k].forEach(function(w){ if(q.indexOf(w) !== -1) scores[k]++; });
+    });
+    var top = Object.keys(scores).sort(function(a,b){return scores[b]-scores[a];})[0];
+    if(scores[top] > 0) return {key:top, exact:true};
+    return {key:"ppl", exact:false};
+  }
+
+  // ---------- Data loading ----------
+  function loadDB(){
+    if(exercisesDB) return Promise.resolve(exercisesDB);
+    return fetch(EX_JSON_URL).then(function(r){
+      if(!r.ok) throw new Error("fetch failed");
+      return r.json();
+    }).then(function(data){
+      exercisesDB = data.filter(function(e){
+        return e.category === "strength" && e.images && e.images.length;
+      });
+      byMuscle = {};
+      exercisesDB.forEach(function(e){
+        (e.primaryMuscles||[]).forEach(function(m){
+          if(!byMuscle[m]) byMuscle[m] = [];
+          byMuscle[m].push(e);
+        });
+      });
+      return exercisesDB;
+    });
+  }
+
+  function pickForGroups(groups){
+    var used = {};
+    var picked = [];
+    groups.forEach(function(muscle){
+      var pool = (byMuscle[muscle]||[]).filter(function(e){ return !used[e.id]; });
+      pool = pool.filter(function(e){ return GOOD_EQUIPMENT.indexOf((e.equipment||"").toLowerCase()) !== -1; })
+                 .concat(pool); // prefer good equipment but keep fallback
+      pool.sort(function(a,b){
+        var ca = a.mechanic === "compound" ? 0 : 1;
+        var cb = b.mechanic === "compound" ? 0 : 1;
+        return ca - cb;
+      });
+      var count = 0;
+      for(var i=0;i<pool.length && count<2;i++){
+        var e = pool[i];
+        if(used[e.id]) continue;
+        used[e.id] = true;
+        picked.push(e);
+        count++;
+      }
+    });
+    return picked.slice(0,8);
+  }
+
+  function setsRepsFor(e){
+    return e.mechanic === "compound" ? "4 × 6–10" : "3 × 10–15";
+  }
+
+  // ---------- Rendering ----------
+  var currentSplit = null;
+  var currentDays = [];
+  var activeDay = 0;
+
+  function renderRack(){
+    var rack = document.getElementById("rack");
+    rack.innerHTML = "";
+    currentDays.forEach(function(d, i){
+      var el = document.createElement("div");
+      el.className = "plate" + (i===activeDay ? " active" : "");
+      el.innerHTML = '<div class="n">'+(i+1)+'</div><div class="g">'+d.title.split(" ")[0]+'</div>';
+      el.addEventListener("click", function(){ activeDay = i; renderRack(); renderDay(); });
+      rack.appendChild(el);
+    });
+  }
+
+  function renderDay(){
+    var day = currentDays[activeDay];
+    document.getElementById("dayTitle").textContent = "День " + (activeDay+1) + " — " + day.title;
+    document.getElementById("dayGroups").textContent = day.groups.join(" · ");
+
+    var cardsEl = document.getElementById("cards");
+    cardsEl.innerHTML = "";
+    var picks = pickForGroups(day.groups);
+
+    if(!picks.length){
+      cardsEl.innerHTML = '<div style="color:var(--chalk-dim); font-size:13px;">Упражнения не найдены — попробуй другой сплит.</div>';
+      return;
+    }
+
+    picks.forEach(function(e){
+      var card = document.createElement("div");
+      card.className = "card";
+
+      var media = document.createElement("div");
+      media.className = "card-media";
+      if(e.images && e.images.length){
+        var img0 = document.createElement("img");
+        img0.src = IMG_BASE + e.images[0];
+        img0.className = "show";
+        media.appendChild(img0);
+        if(e.images.length > 1){
+          var img1 = document.createElement("img");
+          img1.src = IMG_BASE + e.images[1];
+          media.appendChild(img1);
+          var toggle = false;
+          setInterval(function(){
+            toggle = !toggle;
+            img0.classList.toggle("show", !toggle);
+            img1.classList.toggle("show", toggle);
+          }, 700);
+        }
+      } else {
+        media.innerHTML = '<div class="noimg">нет изображения</div>';
+      }
+      card.appendChild(media);
+
+      var body = document.createElement("div");
+      body.className = "card-body";
+      body.innerHTML =
+        '<div class="card-top">' +
+          '<div><div class="ex-name">'+e.name+'</div><div class="ex-tag">'+(e.primaryMuscles||[]).join(", ")+'</div></div>' +
+          '<div class="ex-sets">'+setsRepsFor(e)+'</div>' +
+        '</div>' +
+        '<div class="ex-toggle">Показать технику</div>' +
+        '<div class="ex-instr"><ol>'+ (e.instructions||[]).map(function(s){return "<li>"+s+"</li>";}).join("") +'</ol></div>';
+      card.appendChild(body);
+
+      var toggleEl = body.querySelector(".ex-toggle");
+      var instrEl = body.querySelector(".ex-instr");
+      toggleEl.addEventListener("click", function(){
+        instrEl.classList.toggle("show");
+        toggleEl.textContent = instrEl.classList.contains("show") ? "Скрыть технику" : "Показать технику";
+      });
+
+      cardsEl.appendChild(card);
+    });
+  }
+
+  function setStatus(msg){
+    var s = document.getElementById("status");
+    if(msg){
+      s.classList.add("show");
+      document.getElementById("statusText").textContent = msg;
+    } else {
+      s.classList.remove("show");
+    }
+  }
+
+  function runSearch(query){
+    setStatus("Ищу упражнения...");
+    document.getElementById("resultMeta").classList.remove("show");
+
+    loadDB().then(function(){
+      var m = matchSplit(query);
+      currentSplit = SPLITS[m.key];
+      currentDays = currentSplit.days;
+      activeDay = 0;
+
+      document.getElementById("splitName").textContent = currentSplit.label;
+      document.getElementById("splitFreq").textContent = currentSplit.freq;
+      var noteEl = document.getElementById("splitNote");
+      if(!m.exact || normalize(query) === "" ){
+        noteEl.style.display = "none";
+      } else {
+        noteEl.style.display = "none";
+      }
+
+      renderRack();
+      renderDay();
+      setStatus(null);
+      document.getElementById("resultMeta").classList.add("show");
+    }).catch(function(err){
+      setStatus("Не удалось загрузить базу упражнений. Проверь интернет-соединение.");
+    });
+  }
+
+  document.getElementById("goBtn").addEventListener("click", function(){
+    runSearch(document.getElementById("splitInput").value);
+  });
+  document.getElementById("splitInput").addEventListener("keydown", function(ev){
+    if(ev.key === "Enter") runSearch(this.value);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".chip"), function(chip){
+    chip.addEventListener("click", function(){
+      document.getElementById("splitInput").value = this.getAttribute("data-v");
+      runSearch(this.getAttribute("data-v"));
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
