@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>для тебя</title>
+<style>
+  @font-face {
+    font-family: 'Pixel';
+    src: local('Courier New');
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden;
+    background: #0d0221;
+    font-family: 'Courier New', monospace;
+    image-rendering: pixelated;
+  }
+  #app {
+    position: relative;
+    width: 100%; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(180deg, #1a0b3d 0%, #3d1a5e 35%, #8b3d6e 65%, #e88fa8 100%);
+    overflow: hidden;
+  }
+  .screen {
+    position: absolute; inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 20px;
+  }
+  .screen.active { display: flex; }
+
+  /* stars */
+  .star {
+    position: absolute;
+    width: 3px; height: 3px;
+    background: #fff;
+    box-shadow: 0 0 4px #fff;
+    animation: twinkle 2s infinite ease-in-out;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: .3; }
+    50% { opacity: 1; }
+  }
+
+  /* clouds */
+  .cloud {
+    position: absolute;
+    background: rgba(255,255,255,0.85);
+    border-radius: 2px;
+    box-shadow:
+      -14px 4px 0 rgba(255,255,255,0.85),
+      14px 4px 0 rgba(255,255,255,0.85),
+      -7px -6px 0 rgba(255,255,255,0.85),
+      7px -6px 0 rgba(255,255,255,0.85);
+  }
+
+  .heart-float {
+    position: absolute;
+    font-size: 14px;
+    animation: floatUp 4s linear infinite;
+    opacity: 0.8;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: .9; }
+    100% { transform: translateY(-400px) rotate(20deg); opacity: 0; }
+  }
+
+  .pixel-box {
+    background: #f5e6c8;
+    border: 4px solid #2b1330;
+    box-shadow:
+      0 0 0 4px #f5e6c8,
+      0 0 0 8px #2b1330,
+      6px 6px 0 rgba(0,0,0,0.4);
+    padding: 24px 20px;
+    max-width: 340px;
+    position: relative;
+    z-index: 5;
+  }
+
+  .pixel-title {
+    color: #ff2d78;
+    font-size: 22px;
+    text-shadow: 2px 2px 0 #2b1330;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+
+  .pixel-text {
+    color: #2b1330;
+    font-size: 14px;
+    line-height: 1.7;
+    letter-spacing: 0.5px;
+  }
+
+  .pixel-btn {
+    margin-top: 18px;
+    background: #ff2d78;
+    color: #fff;
+    border: none;
+    padding: 12px 22px;
+    font-family: inherit;
+    font-size: 14px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #2b1330;
+    transition: transform 0.1s;
+  }
+  .pixel-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #2b1330;
+  }
+
+  .arrow-next {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    font-size: 28px;
+    color: #ff2d78;
+    animation: bounce 1.2s infinite;
+    cursor: pointer;
+    z-index: 10;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(6px); }
+  }
+
+  /* character */
+  .girl {
+    width: 90px; height: 130px;
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .girl-hair {
+    width: 70px; height: 55px;
+    background: #2b1a1a;
+    border-radius: 50% 50% 20% 20%;
+    position: absolute; top: 0; left: 10px;
+  }
+  .girl-face {
+    width: 50px; height: 45px;
+    background: #ffd9b3;
+    border-radius: 40%;
+    position: absolute; top: 18px; left: 20px;
+  }
+  .girl-blush {
+    width: 10px; height: 6px;
+    background: #ff9eb5;
+    border-radius: 50%;
+    position: absolute;
+  }
+  .girl-blush.left { top: 38px; left: 22px; }
+  .girl-blush.right { top: 38px; left: 48px; }
+  .girl-body {
+    width: 60px; height: 60px;
+    background: #fff;
+    border-radius: 10px 10px 0 0;
+    position: absolute; top: 60px; left: 15px;
+    box-shadow: inset 0 0 0 3px #e0e0e0;
+  }
+
+  .boy {
+    width: 90px; height: 130px;
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .boy-hair {
+    width: 70px; height: 40px;
+    background: #4a3728;
+    border-radius: 40% 40% 10% 10%;
+    position: absolute; top: 0; left: 10px;
+  }
+  .boy-face {
+    width: 50px; height: 45px;
+    background: #ffd9b3;
+    border-radius: 40%;
+    position: absolute; top: 15px; left: 20px;
+  }
+  .boy-body {
+    width: 60px; height: 60px;
+    background: #2b2b40;
+    border-radius: 10px 10px 0 0;
+    position: absolute; top: 60px; left: 15px;
+  }
+
+  .couple-row {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+    margin-bottom: 10px;
+  }
+
+  .speech-bubble {
+    background: #fff;
+    border: 3px solid #ff2d78;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #2b1330;
+    position: relative;
+    max-width: 260px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  /* keypad */
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 56px);
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .key {
+    background: #ff9eb5;
+    border: 2px solid #2b1330;
+    color: #2b1330;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px 0;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #2b1330;
+  }
+  .key:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 #2b1330; }
+  .code-display {
+    font-size: 24px;
+    letter-spacing: 8px;
+    color: #ff2d78;
+    margin-bottom: 6px;
+    min-height: 30px;
+  }
+  .hint {
+    font-size: 12px;
+    color: #6b4c6e;
+    margin-top: -6px;
+    margin-bottom: 10px;
+  }
+  .shake { animation: shakeAnim 0.3s; }
+  @keyframes shakeAnim {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+
+  .letter-box {
+    background: #f0d9a8;
+    border: 4px solid #2b1330;
+    padding: 20px 18px;
+    max-width: 320px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #2b1330;
+    text-align: left;
+    max-height: 55vh;
+    overflow-y: auto;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.3);
+  }
+
+  .final-heart {
+    font-size: 60px;
+    animation: pulse 1s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+    position: relative;
+    min-height: 60px;
+    align-items: center;
+  }
+  #noBtn { position: relative; }
+
+  .confetti {
+    position: absolute;
+    top: -10px;
+    font-size: 16px;
+    animation: fall 3s linear forwards;
+  }
+  @keyframes fall {
+    to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- SCREEN 0: intro -->
+  <div class="screen active" id="s0">
+    <div class="girl">
+      <div class="girl-hair"></div>
+      <div class="girl-face"></div>
+      <div class="girl-blush left"></div>
+      <div class="girl-blush right"></div>
+      <div class="girl-body"></div>
+    </div>
+    <div class="speech-bubble">привет... у меня для тебя кое-что есть 👉</div>
+    <div class="arrow-next" id="next0">▶</div>
+  </div>
+
+  <!-- SCREEN 1: password -->
+  <div class="screen" id="s1">
+    <div class="pixel-box">
+      <div class="pixel-title">ВВЕДИ КОД</div>
+      <div class="hint">подсказка: важный день в марте 🌷</div>
+      <div class="code-display" id="codeDisplay">____</div>
+      <div class="keypad" id="keypad"></div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: couple -->
+  <div class="screen" id="s2">
+    <div class="couple-row">
+      <div class="boy">
+        <div class="boy-hair"></div>
+        <div class="boy-face"></div>
+        <div class="boy-body"></div>
+      </div>
+      <div class="girl">
+        <div class="girl-hair"></div>
+        <div class="girl-face"></div>
+        <div class="girl-blush left"></div>
+        <div class="girl-blush right"></div>
+        <div class="girl-body"></div>
+      </div>
+    </div>
+    <div class="pixel-title" style="font-size:16px;">ты открыл(а) кое-что важное</div>
+    <button class="pixel-btn" id="toLetter">ЧИТАТЬ →</button>
+  </div>
+
+  <!-- SCREEN 3: letter -->
+  <div class="screen" id="s3">
+    <div class="letter-box" id="letterText"></div>
+    <div class="arrow-next" id="next3">▶</div>
+  </div>
+
+  <!-- SCREEN 4: final question -->
+  <div class="screen" id="s4">
+    <div class="final-heart">💖</div>
+    <div class="pixel-title" style="font-size:18px; margin-top:14px;">будешь со мной?</div>
+    <div class="btn-row">
+      <button class="pixel-btn" id="yesBtn">ДА</button>
+      <button class="pixel-btn" id="noBtn" style="background:#888;">НЕТ</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: success -->
+  <div class="screen" id="s5">
+    <div class="final-heart" style="font-size:80px;">❤️</div>
+    <div class="pixel-title" style="margin-top:10px;">УРА! Я СЧАСТЛИВ(А)!</div>
+    <div class="pixel-text" style="margin-top:8px;">с этого дня — мы вместе 💫</div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  var app = document.getElementById('app');
+
+  // stars
+  for (var i = 0; i < 40; i++) {
+    var st = document.createElement('div');
+    st.className = 'star';
+    st.style.left = Math.random() * 100 + '%';
+    st.style.top = Math.random() * 60 + '%';
+    st.style.animationDelay = Math.random() * 2 + 's';
+    app.appendChild(st);
+  }
+
+  // floating hearts background
+  function spawnHeart() {
+    var h = document.createElement('div');
+    h.className = 'heart-float';
+    h.textContent = ['💗','💕','✨','💖'][Math.floor(Math.random()*4)];
+    h.style.left = Math.random() * 100 + '%';
+    h.style.bottom = '-20px';
+    h.style.animationDuration = (3 + Math.random()*3) + 's';
+    app.appendChild(h);
+    setTimeout(function(){ h.remove(); }, 7000);
+  }
+  setInterval(spawnHeart, 800);
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+  }
+
+  document.getElementById('next0').addEventListener('click', function() {
+    showScreen('s1');
+  });
+
+  // password logic: code = 0803 (8 марта)
+  var CODE = '0803';
+  var entered = '';
+  var keypad = document.getElementById('keypad');
+  var codeDisplay = document.getElementById('codeDisplay');
+  var keys = ['1','2','3','4','5','6','7','8','9','⌫','0','OK'];
+  keys.forEach(function(k) {
+    var btn = document.createElement('div');
+    btn.className = 'key';
+    btn.textContent = k;
+    btn.addEventListener('click', function() { handleKey(k); });
+    keypad.appendChild(btn);
+  });
+
+  function updateDisplay() {
+    var display = '';
+    for (var i = 0; i < 4; i++) {
+      display += entered[i] ? entered[i] : '_';
+    }
+    codeDisplay.textContent = display;
+  }
+
+  function handleKey(k) {
+    if (k === '⌫') {
+      entered = entered.slice(0, -1);
+      updateDisplay();
+      return;
+    }
+    if (k === 'OK') {
+      checkCode();
+      return;
+    }
+    if (entered.length < 4) {
+      entered += k;
+      updateDisplay();
+    }
+    if (entered.length === 4) {
+      setTimeout(checkCode, 200);
+    }
+  }
+
+  function checkCode() {
+    if (entered === CODE) {
+      showScreen('s2');
+    } else {
+      var box = document.querySelector('#s1 .pixel-box');
+      box.classList.add('shake');
+      setTimeout(function() { box.classList.remove('shake'); }, 300);
+      entered = '';
+      updateDisplay();
+    }
+  }
+
+  document.getElementById('toLetter').addEventListener('click', function() {
+    showScreen('s3');
+  });
+
+  var letterText = "Привет.\n\nЯ долго думал(а), как это сказать, и решил(а), что просто напишу честно.\n\nТы человек, рядом с которым мне легко — и одновременно немного волнительно, в самом хорошем смысле. Мне нравится, как ты смеёшься, как рассказываешь про свои дела, как выглядишь, когда задумываешься.\n\nЯ хочу, чтобы ты знал(а): ты мне нравишься. Не как друг — больше.\n\nЕсли тебе тоже — жми ДА на следующем экране. Если нет — тоже окей, честно.";
+  document.getElementById('letterText').textContent = letterText;
+  document.getElementById('letterText').style.whiteSpace = 'pre-line';
+
+  document.getElementById('next3').addEventListener('click', function() {
+    showScreen('s4');
+  });
+
+  document.getElementById('yesBtn').addEventListener('click', function() {
+    showScreen('s5');
+    for (var i = 0; i < 30; i++) {
+      setTimeout(function() {
+        var c = document.createElement('div');
+        c.className = 'confetti';
+        c.textContent = ['💖','✨','🎉','💕'][Math.floor(Math.random()*4)];
+        c.style.left = Math.random() * 100 + '%';
+        app.appendChild(c);
+        setTimeout(function(){ c.remove(); }, 3000);
+      }, i * 100);
+    }
+  });
+
+  // "no" button dodges the cursor/touch
+  var noBtn = document.getElementById('noBtn');
+  var btnRow = document.querySelector('#s4 .btn-row');
+  function dodge() {
+    var rowRect = btnRow.getBoundingClientRect();
+    var maxX = rowRect.width - 90;
+    var maxY = 0;
+    var randX = (Math.random() - 0.5) * 160;
+    noBtn.style.position = 'relative';
+    noBtn.style.left = randX + 'px';
+    noBtn.style.top = (Math.random() * 20 - 10) + 'px';
+  }
+  noBtn.addEventListener('mouseenter', dodge);
+  noBtn.addEventListener('touchstart', function(e) { e.preventDefault(); dodge(); }, {passive:false});
+
+})();
+</script>
+</body>
+</html>
