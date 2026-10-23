@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Валеология: интерактив</title>
+<style>
+:root{--bg:#f3f5f6;--card:#e6ecee;--sage:#c3cfd3;--rust:#3f6772;--ink:#263238;--blue:#2f4f5f;--ok:#3f7a55;--bad:#a54a4a;--surface:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b2226;--card:#232c31;--sage:#3a484f;--rust:#8fc1cc;--ink:#e6ecee;--blue:#a9c7d1;--ok:#7fc79a;--bad:#e59a9a;--surface:#2b363c}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;font-weight:600;color:var(--ink);margin:.3em 0}
+h2{font-size:1.15rem;font-weight:600;color:var(--ink);margin:.2em 0 .6em}
+nav{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}
+nav button{flex:1;min-width:110px}
+button{font:inherit;font-weight:500;cursor:pointer;border:1px solid var(--sage);background:var(--surface);color:var(--ink);padding:10px 16px;border-radius:8px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+button.on,button.primary{background:var(--rust);color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.on,:root:not([data-theme="light"]) button.primary{color:#1b2226}}
+section{display:none;background:var(--card);padding:16px;border-radius:14px}
+section.show{display:block}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;border-color:var(--sage)}
+.opt.right{background:var(--ok);color:#fff;border-color:var(--ok)}
+.opt.wrong{background:var(--bad);color:#fff;border-color:var(--bad)}
+.note{background:var(--surface);padding:10px 12px;border-radius:10px;margin-top:10px}
+.bar{height:8px;background:var(--surface);border-radius:4px;overflow:hidden;margin-bottom:12px}
+.bar i{display:block;height:100%;background:var(--rust);width:0;transition:width .3s}
+label{display:block;margin:10px 0 4px}
+input,select{font:inherit;width:100%;padding:8px;border-radius:8px;border:1px solid var(--sage);background:var(--surface);color:var(--ink)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+table{width:100%;border-collapse:collapse;margin-top:12px;background:var(--surface);border-radius:10px;overflow:hidden}
+td,th{padding:8px;text-align:left;border-bottom:1px solid var(--sage);font-size:.95rem}
+.s-ok{color:var(--ok);font-weight:bold}.s-low{color:var(--bad);font-weight:bold}.s-hi{color:var(--blue);font-weight:bold}
+.teams{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:12px 0}
+.team{background:var(--surface);border:3px solid transparent;border-radius:12px;padding:10px;text-align:center}
+.team.act{border-color:var(--rust)}
+.team b{display:block;font-size:2rem;color:var(--rust)}
+.timer{font-size:2.4rem;text-align:center;color:var(--rust);font-weight:bold}
+.big{font-size:1.15rem}
+.hidden{display:none}
+.table-wrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<main>
+<h1>Здоровый образ жизни и валеология</h1>
+<nav role="tablist">
+<button class="on" data-t="quiz">Викторина</button>
+<button data-t="calc">Калькулятор</button>
+<button data-t="game">Игра на время</button>
+</nav>
+
+<section id="quiz" class="show"></section>
+
+<section id="calc">
+<h2>Мой образ жизни и нормы из презентации</h2>
+<div class="row">
+<div><label for="age">Возраст</label><input id="age" type="number" min="5" max="100" value="19"></div>
+<div><label for="sex">Пол</label><select id="sex"><option>Женский</option><option>Мужской</option></select></div>
+</div>
+<div class="row">
+<div><label for="sleep">Сон, часов в сутки</label><input id="sleep" type="number" min="0" max="16" step="0.5" value="6"></div>
+<div><label for="water">Вода, литров в день</label><input id="water" type="number" min="0" max="6" step="0.1" value="1"></div>
+</div>
+<div class="row">
+<div><label for="act">Умеренная нагрузка, мин в неделю</label><input id="act" type="number" min="0" max="2000" value="90"></div>
+<div><label for="steps">Шагов в день</label><input id="steps" type="number" min="0" max="40000" step="500" value="5000"></div>
+</div>
+<div class="row">
+<div><label for="str">Силовые тренировки, дней в неделю</label><input id="str" type="number" min="0" max="7" value="1"></div>
+<div><label for="breaks">Перерыв на разминку каждые 2 часа?</label><select id="breaks"><option value="1">Да</option><option value="0" selected>Нет</option></select></div>
+</div>
+<p><button class="primary" id="calcBtn">Сравнить с нормами</button></p>
+<div id="calcOut"></div>
+</section>
+
+<section id="game">
+<div id="setup">
+<h2>Командная игра</h2>
+<label for="nt">Количество команд</label>
+<select id="nt"><option>2</option><option selected>3</option><option>4</option></select>
+<div id="names"></div>
+<label for="sec">Секунд на ответ</label>
+<select id="sec"><option>15</option><option selected>20</option><option>30</option></select>
+<label for="rounds">Кругов (каждая команда отвечает по разу в круге)</label>
+<select id="rounds"><option>2</option><option selected>3</option><option>4</option></select>
+<p><button class="primary" id="startGame">Начать игру</button></p>
+</div>
+<div id="play" class="hidden">
+<div class="teams" id="board"></div>
+<div id="gq"></div>
+</div>
+</section>
+</main>
+
+<script>
+const Q=[
+["Что такое здоровый образ жизни?",["Модель жизни, обеспечивающая физическое, психическое и социальное благополучие","Образ жизни без болезней и медицинского наблюдения в течение года","Система занятий спортом, направленная на высокие спортивные результаты","Режим питания и отдыха, который подбирает врач для каждого человека"],0,"Здоровый образ жизни охватывает физическое, психическое и социальное благополучие."],
+["Валеология это…",["Наука о причинах и лечении заболеваний","Наука о сохранении, укреплении и развитии здоровья","Раздел лечебной физкультуры для реабилитации","Наука о составлении рационов питания"],1,"Валеология изучает, как сохранять, укреплять и развивать здоровье."],
+["Какая задача валеологии связана с изучением природных, социальных, психологических и поведенческих факторов?",["Оценка уровня индивидуального здоровья","Профилактика заболеваний и факторов риска","Изучение факторов, влияющих на здоровье","Просветительская и обучающая деятельность"],2,"Это первая задача: какие факторы укрепляют здоровье, а какие снижают его уровень."],
+["Что относится к профилактике заболеваний по валеологии?",["Медикаментозное лечение уже развившегося заболевания","Обучение, ранняя диагностика, мониторинг и коррекция образа жизни","Назначение курса витаминов всем без предварительного обследования","Полный отказ от нагрузок на время сезонных заболеваний"],1,"Ключевая идея: предотвратить болезнь до её возникновения."],
+["Что учитывают валеологи в персональных программах оздоровления?",["Возраст, вес, рост и результаты школьных нормативов по физкультуре","Пол, профессию, место жительства и уровень дохода семьи","Возраст, пол, наследственность, физическую активность и психическое состояние","Образование, семейное положение и личные предпочтения пациента"],2,"Индивидуальные схемы строятся с учётом всех этих факторов."],
+["Сколько минут умеренной нагрузки в неделю рекомендовано взрослым?",["Не менее 60","Не менее 150","Не менее 300","Не менее 500"],1,"Норма из презентации: не менее 150 минут умеренной нагрузки в неделю."],
+["Сколько дней в неделю рекомендованы силовые тренировки?",["Каждый день","1 день","2–3 дня","5–6 дней"],2,"Рекомендация: 2–3 дня силовых тренировок."],
+["Как часто нужен перерыв и лёгкие упражнения при сидячей работе?",["Каждые 30 минут","Каждые 2 часа","Раз в 4 часа","Только вечером"],1,"Каждые 2 часа: перерыв и лёгкие упражнения."],
+["Какой водный баланс рекомендован в валеологических рекомендациях?",["0,5–1 литр","1,5–2 литра","3–4 литра","Пить только при жажде"],1,"1,5–2 литра воды в день."],
+["Сколько часов качественного сна рекомендовано?",["4–5","5–6","7–8","10–12"],2,"Качественный сон: 7–8 часов."],
+["Что относится к воспитательному значению спорта?",["Укрепляет волю и воспитывает ответственность","Формирует только силу и выносливость мышц","Заменяет полноценное питание и отдых","Освобождает от необходимости соблюдать режим дня"],0,"Спорт укрепляет волю, целеустремлённость, командную работу, самоуправление и ответственность."],
+["Как соотносятся физическое воспитание и валеология?",["Эти области изучают разные стороны здоровья и не пересекаются","Физвоспитание — практическое воплощение валеологических знаний","Валеология является одним из разделов физического воспитания","Физвоспитание заменяет валеологию в школьной программе"],1,"Валеология даёт научно обоснованные нормы активности, а физвоспитание реализует их на практике."],
+["Что входит в основные формы физического воспитания?",["Утренняя гимнастика, учебные занятия, секции, прогулки и пробежки","Обязательные уроки физкультуры в школе и вузе по расписанию","Участие в районных и городских спортивных соревнованиях","Самостоятельные занятия дома без наставника и режима"],0,"Формы: утренняя гимнастика, учебные занятия, самостоятельные упражнения, секции, прогулки и пробежки, оздоровительная гимнастика."],
+["Какой эффект физической активности назван в презентации?",["Снижает уровень гормонов стресса","Повышает уровень гормонов стресса","Ухудшает качество ночного сна","Замедляет обмен веществ в покое"],0,"Физическая активность снижает уровень гормонов стресса, улучшает сон и активизирует метаболизм."]
+];
+const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x===b));
+ document.querySelectorAll("section").forEach(s=>s.classList.toggle("show",s.id===b.dataset.t));
+});
+
+/* Викторина */
+let qs,qi,qscore,qdone;
+function startQuiz(){qs=shuffle(Q);qi=0;qscore=0;showQ()}
+function showQ(){
+ const el=$("#quiz");
+ if(qi>=qs.length){
+  const p=Math.round(qscore/qs.length*100);
+  el.innerHTML=`<h2>Результат: ${qscore} из ${qs.length} (${p}%)</h2><p class="big">${p>=85?"Отлично, тема усвоена.":p>=60?"Хорошо, повторите пункты, где были ошибки.":"Стоит перечитать презентацию и пройти ещё раз."}</p><button class="primary" id="again">Пройти заново</button>`;
+  $("#again").onclick=startQuiz;return;
+ }
+ const [q,o,c]=qs[qi];qdone=false;
+ const order=shuffle(o.map((t,i)=>i));
+ el.innerHTML=`<div class="bar"><i style="width:${qi/qs.length*100}%"></i></div><p>Вопрос ${qi+1} из ${qs.length}</p><h2>${esc(q)}</h2>`+
+ order.map(i=>`<button class="opt" data-i="${i}">${esc(o[i])}</button>`).join("")+`<div id="fb"></div>`;
+ el.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+  if(qdone)return;qdone=true;const i=+b.dataset.i;
+  el.querySelectorAll(".opt").forEach(x=>{if(+x.dataset.i===c)x.classList.add("right")});
+  if(i===c)qscore++;else b.classList.add("wrong");
+  $("#fb").innerHTML=`<div class="note">${esc(qs[qi][3])}</div><p><button class="primary" id="nx">${qi+1<qs.length?"Дальше":"Показать результат"}</button></p>`;
+  $("#nx").onclick=()=>{qi++;showQ()};
+ });
+}
+startQuiz();
+
+/* Калькулятор */
+$("#calcBtn").onclick=()=>{
+ const v=id=>parseFloat($("#"+id).value)||0;
+ const age=v("age"),minor=age<18;
+ const rows=[];
+ const chk=(name,val,lo,hi,unit,norm)=>{
+  const s=val<lo?["s-low","Ниже нормы"]:(hi&&val>hi?["s-hi","Выше нормы"]:["s-ok","В норме"]);
+  rows.push(`<tr><td>${name}</td><td>${val} ${unit}</td><td>${norm}</td><td class="${s[0]}">${s[1]}</td></tr>`);
+  return val>=lo&&(!hi||val<=hi);
+ };
+ let ok=0,n=0;
+ const add=r=>{n++;if(r)ok++};
+ add(minor?chk("Сон",v("sleep"),8,10,"ч","8–10 ч (до 18 лет)"):chk("Сон",v("sleep"),7,8,"ч","7–8 ч"));
+ add(chk("Вода",v("water"),1.5,2,"л","1,5–2 л"));
+ add(minor?chk("Активность",v("act"),420,0,"мин/нед","60 мин в день (≈420 мин/нед)"):chk("Активность",v("act"),150,0,"мин/нед","≥150 мин/нед"));
+ add(chk("Шаги",v("steps"),8000,10000,"","8 000–10 000"));
+ add(chk("Силовые",v("str"),2,3,"дн/нед","2–3 дня"));
+ const br=$("#breaks").value==="1";n++;if(br)ok++;
+ rows.push(`<tr><td>Перерывы</td><td>${br?"Да":"Нет"}</td><td>каждые 2 ч</td><td class="${br?"s-ok":"s-low"}">${br?"В норме":"Ниже нормы"}</td></tr>`);
+ const fix=[];
+ if(v("sleep")<(minor?8:7))fix.push("добавьте сон, ложитесь на 30–60 минут раньше");
+ if(v("water")<1.5)fix.push("держите бутылку воды рядом и пейте в течение дня");
+ if(v("act")<(minor?420:150))fix.push("добавьте ежедневную прогулку или зарядку");
+ if(v("steps")<8000)fix.push("ходите пешком часть маршрута");
+ if(v("str")<2)fix.push("введите 2–3 силовые тренировки в неделю");
+ if(!br)fix.push("каждые 2 часа вставайте и делайте лёгкие упражнения");
+ $("#calcOut").innerHTML=`<h2>${ok} из ${n} показателей в норме</h2><div class="table-wrap"><table><tr><th>Показатель</th><th>У вас</th><th>Норма</th><th>Итог</th></tr>${rows.join("")}</table></div>`+
+ (fix.length?`<div class="note"><b>Что улучшить:</b><br>${fix.map(esc).join(";<br>")}.</div>`:`<div class="note">Все показатели в норме. Сохраняйте режим.</div>`)+
+ `<div class="note">Нормы взяты из презентации (для взрослых). Для возраста до 18 лет сон и активность скорректированы по рекомендациям ВОЗ. Это учебный расчёт, а не медицинская оценка.</div>`;
+};
+
+/* Игра */
+const names=()=>{const n=+$("#nt").value;$("#names").innerHTML=Array.from({length:n},(_,i)=>`<label for="tn${i}">Команда ${i+1}</label><input id="tn${i}" value="Команда ${i+1}" maxlength="20">`).join("")};
+$("#nt").onchange=names;names();
+let G;
+$("#startGame").onclick=()=>{
+ const n=+$("#nt").value,r=+$("#rounds").value;
+ G={teams:Array.from({length:n},(_,i)=>({name:$("#tn"+i).value.trim()||"Команда "+(i+1),score:0})),
+  sec:+$("#sec").value,total:n*r,turn:0,pool:[],t:null,left:0};
+ $("#setup").classList.add("hidden");$("#play").classList.remove("hidden");nextTurn();
+};
+function renderBoard(){
+ $("#board").innerHTML=G.teams.map((t,i)=>`<div class="team ${i===G.turn%G.teams.length&&G.turn<G.total?"act":""}"><span>${esc(t.name)}</span><b>${t.score}</b></div>`).join("");
+}
+function nextTurn(){
+ clearInterval(G.t);renderBoard();
+ if(G.turn>=G.total){
+  const max=Math.max(...G.teams.map(t=>t.score)),w=G.teams.filter(t=>t.score===max).map(t=>esc(t.name)).join(", ");
+  $("#gq").innerHTML=`<h2>Игра окончена</h2><p class="big">Победитель: <b>${w}</b> (${max} б.)</p><button class="primary" id="re">Новая игра</button>`;
+  $("#re").onclick=()=>{$("#play").classList.add("hidden");$("#setup").classList.remove("hidden")};return;
+ }
+ if(!G.pool.length)G.pool=shuffle(Q);
+ const q=G.pool.pop(),team=G.teams[G.turn%G.teams.length];
+ const order=shuffle(q[1].map((t,i)=>i));let done=false;G.left=G.sec;
+ $("#gq").innerHTML=`<div class="timer" id="tm">${G.left}</div><p>Отвечает: <b>${esc(team.name)}</b></p><h2>${esc(q[0])}</h2>`+
+ order.map(i=>`<button class="opt" data-i="${i}">${esc(q[1][i])}</button>`).join("")+`<div id="gf"></div>`;
+ const finish=(i)=>{
+  if(done)return;done=true;clearInterval(G.t);
+  document.querySelectorAll("#gq .opt").forEach(x=>{if(+x.dataset.i===q[2])x.classList.add("right")});
+  let msg;
+  if(i===q[2]){const pts=1+(G.left>=G.sec/2?1:0);team.score+=pts;msg=`Верно, +${pts} ${pts===2?"(быстрый ответ)":""}`}
+  else{if(i>=0)document.querySelector(`#gq .opt[data-i="${i}"]`).classList.add("wrong");msg=i<0?"Время вышло, 0 баллов":"Неверно, 0 баллов"}
+  renderBoard();
+  $("#gf").innerHTML=`<div class="note"><b>${msg}</b><br>${esc(q[3])}</div><p><button class="primary" id="gn">Следующая команда</button></p>`;
+  $("#gn").onclick=()=>{G.turn++;nextTurn()};
+ };
+ document.querySelectorAll("#gq .opt").forEach(b=>b.onclick=()=>finish(+b.dataset.i));
+ G.t=setInterval(()=>{G.left--;const tm=$("#tm");if(tm)tm.textContent=G.left;if(G.left<=0)finish(-1)},1000);
+}
+</script>
+</body>
+</html>
