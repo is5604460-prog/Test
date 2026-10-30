@@ -3,218 +3,264 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Валеология: интерактив</title>
+<title>Валеология. Тема 9: игры 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f3f5f6;--card:#e6ecee;--sage:#c3cfd3;--rust:#3f6772;--ink:#263238;--blue:#2f4f5f;--ok:#3f7a55;--bad:#a54a4a;--surface:#fff;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b2226;--card:#232c31;--sage:#3a484f;--rust:#8fc1cc;--ink:#e6ecee;--blue:#a9c7d1;--ok:#7fc79a;--bad:#e59a9a;--surface:#2b363c}}
-*{box-sizing:border-box}
+:root{--bg:#0a0a12;--card:#14141f;--line:#26263a;--tx:#ecebf5;--mut:#9391ab;--ac:#7c6cf8;--ac2:#e056a0;--ok:#3eded4;--bad:#ff4f6d;--okbg:rgba(62,222,212,.13);--badbg:rgba(255,79,109,.13);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root{--bg:#f6f5fb;--card:#fff;--line:#dcdaea;--tx:#1a1930;--mut:#66647f;--ac:#5b49e0;--ac2:#c2307f;--ok:#0f8f87;--bad:#d62f4f;--okbg:rgba(15,143,135,.12);--badbg:rgba(214,47,79,.1)}}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-main{max-width:760px;margin:0 auto;padding:16px}
-h1{font-size:1.4rem;font-weight:600;color:var(--ink);margin:.3em 0}
-h2{font-size:1.15rem;font-weight:600;color:var(--ink);margin:.2em 0 .6em}
-nav{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}
-nav button{flex:1;min-width:110px}
-button{font:inherit;font-weight:500;cursor:pointer;border:1px solid var(--sage);background:var(--surface);color:var(--ink);padding:10px 16px;border-radius:8px}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-button.on,button.primary{background:var(--rust);color:#fff}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.on,:root:not([data-theme="light"]) button.primary{color:#1b2226}}
-section{display:none;background:var(--card);padding:16px;border-radius:14px}
-section.show{display:block}
-.opt{display:block;width:100%;text-align:left;margin:8px 0;border-color:var(--sage)}
-.opt.right{background:var(--ok);color:#fff;border-color:var(--ok)}
-.opt.wrong{background:var(--bad);color:#fff;border-color:var(--bad)}
-.note{background:var(--surface);padding:10px 12px;border-radius:10px;margin-top:10px}
-.bar{height:8px;background:var(--surface);border-radius:4px;overflow:hidden;margin-bottom:12px}
-.bar i{display:block;height:100%;background:var(--rust);width:0;transition:width .3s}
-label{display:block;margin:10px 0 4px}
-input,select{font:inherit;width:100%;padding:8px;border-radius:8px;border:1px solid var(--sage);background:var(--surface);color:var(--ink)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-table{width:100%;border-collapse:collapse;margin-top:12px;background:var(--surface);border-radius:10px;overflow:hidden}
-td,th{padding:8px;text-align:left;border-bottom:1px solid var(--sage);font-size:.95rem}
-.s-ok{color:var(--ok);font-weight:bold}.s-low{color:var(--bad);font-weight:bold}.s-hi{color:var(--blue);font-weight:bold}
-.teams{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:12px 0}
-.team{background:var(--surface);border:3px solid transparent;border-radius:12px;padding:10px;text-align:center}
-.team.act{border-color:var(--rust)}
-.team b{display:block;font-size:2rem;color:var(--rust)}
-.timer{font-size:2.4rem;text-align:center;color:var(--rust);font-weight:bold}
-.big{font-size:1.15rem}
-.hidden{display:none}
-.table-wrap{overflow-x:auto}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 Onest,system-ui,-apple-system,sans-serif}
+.wrap{max-width:560px;margin:0 auto;padding:20px 16px 48px}
+h1{font:700 21px/1.3 Unbounded,system-ui,sans-serif;margin:8px 0}
+.sub{color:var(--mut);margin:0 0 20px}
+button{font:inherit;color:inherit;cursor:pointer}
+.mode,.opt{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:11px}
+.mode b{display:block;font:500 15px Unbounded,system-ui,sans-serif;margin-bottom:4px}
+.mode span{color:var(--mut);font-size:14px}
+.mode:hover,.opt:hover,button:focus-visible{border-color:var(--ac);outline:none}
+.top{display:flex;justify-content:space-between;align-items:center;color:var(--mut);font-size:14px}
+.back{background:none;border:0;color:var(--mut);padding:4px 0}
+.hint{color:var(--mut);font-size:14px;margin:8px 0}
+.q{font:600 19px/1.4 Onest,system-ui,sans-serif;margin:14px 0 16px}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.note{border-radius:12px;padding:12px 14px;margin:12px 0;font-size:15px;background:var(--card);border:1px solid var(--line)}
+.note.g{background:var(--okbg);border-color:var(--ok)}.note.r{background:var(--badbg);border-color:var(--bad)}
+.next{width:100%;border:0;border-radius:12px;padding:14px;font-weight:600;color:#fff;background:linear-gradient(90deg,var(--ac),var(--ac2))}
+.ms{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0 4px}
+.ms label{font-size:13px;color:var(--mut)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;transition:width .4s}
+.rope{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;margin:14px 0 6px}
+.rope i{height:26px;border-radius:6px;background:var(--line)}
+.rope i.on{background:linear-gradient(90deg,var(--ac),var(--ac2))}
+.rope i.e{outline:2px solid var(--ok)}
+.turn{padding:9px 12px;border-radius:10px;font-weight:600;text-align:center;color:#fff;margin:12px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 18px;min-height:150px;display:flex;align-items:center;justify-content:center;text-align:center;font:600 19px/1.4 Onest,system-ui,sans-serif;touch-action:pan-y;user-select:none;cursor:grab;margin-top:10px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 4px}
+.row2 .opt{text-align:center;margin:0}
+.mo{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.mo button{padding:14px 0;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+.mo .ok{border-color:var(--ok);background:var(--okbg)}.mo .bad{border-color:var(--bad);background:var(--badbg)}
+.mo .c{outline:2px solid var(--ac)}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+.dz{border:2px dashed var(--line);border-radius:16px}
+.drag{position:relative;z-index:9;opacity:.92;cursor:grabbing;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.dr{touch-action:none;cursor:grab;user-select:none}
+.chp{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:9px}
+.chp.ok{border-color:var(--ok);background:var(--okbg)}.chp.bad{border-color:var(--bad);background:var(--badbg)}
+.scn{padding:14px;margin:10px 0;text-align:center;background:var(--card)}
+.pt{width:100px;height:100px;margin:2px auto 10px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:48px;background:conic-gradient(var(--ac2) calc(var(--p)*1%),var(--line) 0)}
+.pt span{width:86px;height:86px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center}
+.pt.g{box-shadow:0 0 0 4px var(--ok)}.pt.r{animation:sh .4s}
+.bub{font-size:15px;font-weight:600}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.rp{position:relative;height:84px;margin:12px 0;overflow:hidden}
+.rp .ln{position:absolute;left:0;right:0;top:40px;height:6px;background:var(--line);border-radius:3px}
+.rp .fl,.rp .tm{position:absolute;transform:translateX(-50%);transition:left .6s}
+.rp .fl{top:14px;font-size:30px}.rp .tm{top:22px;font-size:34px}
+.bk{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bk div{padding:18px 6px;text-align:center;font:500 14px Unbounded,system-ui,sans-serif;cursor:pointer}
+.card.dr{touch-action:none}
+.stamp{position:fixed;left:50%;top:40%;font:700 38px Unbounded,system-ui,sans-serif;transform:translate(-50%,-50%) rotate(-10deg);pointer-events:none;animation:st .7s forwards;z-index:8}
+@keyframes st{from{opacity:1;transform:translate(-50%,-50%) scale(1.5) rotate(-10deg)}to{opacity:0;transform:translate(-50%,-90%) scale(1) rotate(-10deg)}}
+.cf{position:fixed;font-size:22px;pointer-events:none;animation:cf .9s ease-out forwards;z-index:8}
+@keyframes cf{to{transform:translate(var(--x),var(--y)) rotate(360deg);opacity:0}}
+.wh{position:relative;width:100%;max-width:340px;aspect-ratio:1;margin:8px auto}
+.wh button{position:absolute;width:16%;aspect-ratio:1;border-radius:50%;border:1px solid var(--line);background:var(--card);font-size:11px;line-height:1.1;padding:0;transform:translate(-50%,-50%)}
+.wh button.ok{border-color:var(--ok);background:var(--okbg)}.wh button.bad{border-color:var(--bad);background:var(--badbg)}
+.wh button.win{outline:3px solid #f5a524}
+.wh .ct{position:absolute;inset:26%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:12px;color:var(--mut)}
+.tok{font-size:40px;width:68px;height:68px;border-radius:50%;background:var(--card);border:2px solid var(--ac);display:flex;align-items:center;justify-content:center}
+@media (prefers-reduced-motion:reduce){.stamp,.cf,.pt.r{animation:none}.rp .fl,.rp .tm{transition:none}}
 </style>
 </head>
 <body>
-<main>
-<h1>Здоровый образ жизни и валеология</h1>
-<nav role="tablist">
-<button class="on" data-t="quiz">Викторина</button>
-<button data-t="calc">Калькулятор</button>
-<button data-t="game">Игра на время</button>
-</nav>
-
-<section id="quiz" class="show"></section>
-
-<section id="calc">
-<h2>Мой образ жизни и нормы из презентации</h2>
-<div class="row">
-<div><label for="age">Возраст</label><input id="age" type="number" min="5" max="100" value="19"></div>
-<div><label for="sex">Пол</label><select id="sex"><option>Женский</option><option>Мужской</option></select></div>
-</div>
-<div class="row">
-<div><label for="sleep">Сон, часов в сутки</label><input id="sleep" type="number" min="0" max="16" step="0.5" value="6"></div>
-<div><label for="water">Вода, литров в день</label><input id="water" type="number" min="0" max="6" step="0.1" value="1"></div>
-</div>
-<div class="row">
-<div><label for="act">Умеренная нагрузка, мин в неделю</label><input id="act" type="number" min="0" max="2000" value="90"></div>
-<div><label for="steps">Шагов в день</label><input id="steps" type="number" min="0" max="40000" step="500" value="5000"></div>
-</div>
-<div class="row">
-<div><label for="str">Силовые тренировки, дней в неделю</label><input id="str" type="number" min="0" max="7" value="1"></div>
-<div><label for="breaks">Перерыв на разминку каждые 2 часа?</label><select id="breaks"><option value="1">Да</option><option value="0" selected>Нет</option></select></div>
-</div>
-<p><button class="primary" id="calcBtn">Сравнить с нормами</button></p>
-<div id="calcOut"></div>
-</section>
-
-<section id="game">
-<div id="setup">
-<h2>Командная игра</h2>
-<label for="nt">Количество команд</label>
-<select id="nt"><option>2</option><option selected>3</option><option>4</option></select>
-<div id="names"></div>
-<label for="sec">Секунд на ответ</label>
-<select id="sec"><option>15</option><option selected>20</option><option>30</option></select>
-<label for="rounds">Кругов (каждая команда отвечает по разу в круге)</label>
-<select id="rounds"><option>2</option><option selected>3</option><option>4</option></select>
-<p><button class="primary" id="startGame">Начать игру</button></p>
-</div>
-<div id="play" class="hidden">
-<div class="teams" id="board"></div>
-<div id="gq"></div>
-</div>
-</section>
-</main>
-
+<div class="wrap" id="app"></div>
 <script>
-const Q=[
-["Что такое здоровый образ жизни?",["Модель жизни, обеспечивающая физическое, психическое и социальное благополучие","Образ жизни без болезней и медицинского наблюдения в течение года","Система занятий спортом, направленная на высокие спортивные результаты","Режим питания и отдыха, который подбирает врач для каждого человека"],0,"Здоровый образ жизни охватывает физическое, психическое и социальное благополучие."],
-["Валеология это…",["Наука о причинах и лечении заболеваний","Наука о сохранении, укреплении и развитии здоровья","Раздел лечебной физкультуры для реабилитации","Наука о составлении рационов питания"],1,"Валеология изучает, как сохранять, укреплять и развивать здоровье."],
-["Какая задача валеологии связана с изучением природных, социальных, психологических и поведенческих факторов?",["Оценка уровня индивидуального здоровья","Профилактика заболеваний и факторов риска","Изучение факторов, влияющих на здоровье","Просветительская и обучающая деятельность"],2,"Это первая задача: какие факторы укрепляют здоровье, а какие снижают его уровень."],
-["Что относится к профилактике заболеваний по валеологии?",["Медикаментозное лечение уже развившегося заболевания","Обучение, ранняя диагностика, мониторинг и коррекция образа жизни","Назначение курса витаминов всем без предварительного обследования","Полный отказ от нагрузок на время сезонных заболеваний"],1,"Ключевая идея: предотвратить болезнь до её возникновения."],
-["Что учитывают валеологи в персональных программах оздоровления?",["Возраст, вес, рост и результаты школьных нормативов по физкультуре","Пол, профессию, место жительства и уровень дохода семьи","Возраст, пол, наследственность, физическую активность и психическое состояние","Образование, семейное положение и личные предпочтения пациента"],2,"Индивидуальные схемы строятся с учётом всех этих факторов."],
-["Сколько минут умеренной нагрузки в неделю рекомендовано взрослым?",["Не менее 60","Не менее 150","Не менее 300","Не менее 500"],1,"Норма из презентации: не менее 150 минут умеренной нагрузки в неделю."],
-["Сколько дней в неделю рекомендованы силовые тренировки?",["Каждый день","1 день","2–3 дня","5–6 дней"],2,"Рекомендация: 2–3 дня силовых тренировок."],
-["Как часто нужен перерыв и лёгкие упражнения при сидячей работе?",["Каждые 30 минут","Каждые 2 часа","Раз в 4 часа","Только вечером"],1,"Каждые 2 часа: перерыв и лёгкие упражнения."],
-["Какой водный баланс рекомендован в валеологических рекомендациях?",["0,5–1 литр","1,5–2 литра","3–4 литра","Пить только при жажде"],1,"1,5–2 литра воды в день."],
-["Сколько часов качественного сна рекомендовано?",["4–5","5–6","7–8","10–12"],2,"Качественный сон: 7–8 часов."],
-["Что относится к воспитательному значению спорта?",["Укрепляет волю и воспитывает ответственность","Формирует только силу и выносливость мышц","Заменяет полноценное питание и отдых","Освобождает от необходимости соблюдать режим дня"],0,"Спорт укрепляет волю, целеустремлённость, командную работу, самоуправление и ответственность."],
-["Как соотносятся физическое воспитание и валеология?",["Эти области изучают разные стороны здоровья и не пересекаются","Физвоспитание — практическое воплощение валеологических знаний","Валеология является одним из разделов физического воспитания","Физвоспитание заменяет валеологию в школьной программе"],1,"Валеология даёт научно обоснованные нормы активности, а физвоспитание реализует их на практике."],
-["Что входит в основные формы физического воспитания?",["Утренняя гимнастика, учебные занятия, секции, прогулки и пробежки","Обязательные уроки физкультуры в школе и вузе по расписанию","Участие в районных и городских спортивных соревнованиях","Самостоятельные занятия дома без наставника и режима"],0,"Формы: утренняя гимнастика, учебные занятия, самостоятельные упражнения, секции, прогулки и пробежки, оздоровительная гимнастика."],
-["Какой эффект физической активности назван в презентации?",["Снижает уровень гормонов стресса","Повышает уровень гормонов стресса","Ухудшает качество ночного сна","Замедляет обмен веществ в покое"],0,"Физическая активность снижает уровень гормонов стресса, улучшает сон и активизирует метаболизм."]
-];
 const $=s=>document.querySelector(s);
-const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const app=$("#app"),A={};let stop=null;
+const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const clamp=v=>Math.max(0,Math.min(100,v));
+const go=f=>{if(stop){stop();stop=null;}f();};
+app.addEventListener("click",e=>{const t=e.target.closest("[data-a]");if(t&&A[t.dataset.a])A[t.dataset.a](t.dataset.v,t);});
+A.menu=()=>go(menu);
+A.g=v=>go(FN[v]);
+const bar=(m,s)=>'<div class="top"><button class="back" data-a="menu">Меню</button><span'+(s==="hud"?' id="hud"':"")+'>'+(s==="hud"?"":s)+'</span></div>';
+const fin=(h,s,v)=>{app.innerHTML='<h1>'+h+'</h1><p class="sub">'+s+'</p><button class="mode" data-a="g" data-v="'+v+'"><b>Ещё раз</b><span>Начать заново</span></button><button class="mode" data-a="menu"><b>В меню</b><span>Другая игра</span></button>';};
 
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
- document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x===b));
- document.querySelectorAll("section").forEach(s=>s.classList.toggle("show",s.id===b.dataset.t));
-});
+/* данные */
+const TF=[
+["Репродуктивное здоровье означает только отсутствие болезней.",0,"Это полное физическое, психическое и социальное благополучие."],
+["Оптимальный возраст первых родов: 20-25 лет.",1,"Для последующих родов: до 35."],
+["Зачатие лучше всего весной и летом.",0,"Лучше осенью и зимой."],
+["Интервал между родами не менее 2-2,5 лет.",1,"Желательно не более 5."],
+["После острой инфекции зачатие возможно сразу.",0,"Не менее чем через 2 месяца."],
+["Алкоголь и курение нужно бросить за 2 месяца до беременности.",1,"Так и есть."],
+["Сексуальная дисгармония сама по себе тяжёлая болезнь.",0,"Это функциональное нарушение, предболезненная форма."],
+["Материнская смертность показывает социально-экономическое благополучие страны.",1,"Один из самых чувствительных барометров."],
+["Пик роста у мальчиков раньше, чем у девочек.",0,"У девочек около 12 лет, у мальчиков около 14."],
+["В подростковом возрасте развивается абстрактное мышление.",1,"Так и есть."],
+["Около 6 млн женщин в год умирают от причин, связанных с беременностью и родами.",1,"Данные ВОЗ, в основном развивающиеся страны."],
+["Благоприятный возраст матери: 30-45 лет.",0,"Благоприятный возраст 20-35 лет."],
+["Доверие супругов помогает в интимной адаптации.",1,"Так и есть."],
+["Подростковая импульсивность всегда признак болезни.",0,"Это возрастная особенность."]
+];
+const NUM=[
+["Оптимальный возраст первых родов",["15-19 лет","20-25 лет","26-30 лет","30-35 лет"],1,"Для последующих до 35."],
+["Благоприятный возраст матери",["18-25 лет","20-35 лет","25-40 лет","30-45 лет"],1],
+["Минимальный интервал между родами",["6 месяцев","1-1,5 года","2-2,5 года","4 года"],2,"Желательно не более 5 лет."],
+["За сколько до беременности отказаться от вредных привычек",["за 2 недели","за 2 месяца","за 6 месяцев","за 1 год"],1],
+["Через сколько зачатие после острой инфекции супругов",["2 недели","1 месяц","2 месяца","1 год"],2],
+["Женщин в год умирает от причин беременности и родов (ВОЗ)",["около 600 тыс.","около 6 млн","около 60 млн","около 175 млн"],1],
+["Нежеланных беременностей в год (ВОЗ)",["17,5 млн","45 млн","175 млн","600 млн"],2],
+["Абортов в год (ВОЗ)",["4,5 млн","30 млн","45 млн","70 млн"],2],
+["Умирают от неквалифицированных абортов в год",["7 000","70 000","700 000","7 млн"],1],
+["Пик роста у девочек",["10 лет","12 лет","14 лет","16 лет"],1,"У мальчиков около 14."],
+["Пик роста у мальчиков",["12 лет","14 лет","16 лет","18 лет"],1,"У девочек около 12."],
+["Основных элементов сексуального здоровья по ВОЗ",["2","3","4","5"],1]
+];
+const CS=[
+["Девушка, 27 лет: «Мы с мужем хотим первого ребёнка. Что нам сделать за 2 месяца до беременности?»",[["Полностью отказаться от алкоголя и курения, наладить питание",1],["Сократить курение и пить вино только по праздникам",0],["Начать пить витамины и ничего не менять в привычках",0]],"За 2 месяца нужно отказаться от вредных привычек, нормально питаться и двигаться."],
+["Женщина: «Первому ребёнку год. Когда можно планировать второго?»",[["Через 2-2,5 года, но лучше не затягивать больше чем на 5 лет",1],["Сразу, чтобы у детей была маленькая разница в возрасте",0],["Не раньше чем через 7-8 лет, чтобы организм отдохнул",0]],"Между родами должно пройти минимум 2-2,5 года, желательно не больше 5."],
+["Муж и жена переболели гриппом: «Можно зачинать сейчас?»",[["Подождать минимум 2 месяца после выздоровления",1],["Хватит пары недель, когда пройдёт слабость",0],["Можно сразу, если температура уже нормальная",0]],"После острой инфекции зачатие допустимо не раньше чем через 2 месяца."],
+["Женщина с хроническим заболеванием: «Мне можно беременеть?»",[["Планировать при ремиссии от 1 до 5 лет, с врачом",1],["Можно, если сейчас нет жалоб, врач не нужен",0],["Нельзя, при любой хронической болезни это опасно",0]],"Всё зависит от болезни, и только без обострений в течение 1-5 лет."],
+["Мальчик, 14 лет: «Я ниже девочек в классе, со мной что-то не так?»",[["Нормально: у девочек скачок роста в 12, у мальчиков в 14",1],["Нужно сдать анализы на гормоны, так быть не должно",0],["Это отставание в развитии, поможет только диета",0]],"Пик роста у девочек около 12 лет, у мальчиков около 14."],
+["Мама 15-летней дочери: «Она стала резкой и обидчивой»",[["В её возрасте это бывает, главное спокойно разговаривать",1],["Нужно показать её психиатру, так вести себя нельзя",0],["Ограничить телефон и прогулки, пока не успокоится",0]],"В подростковом возрасте повышена чувствительность и импульсивность, организм перестраивается."],
+["Супруги: «В интимной жизни стало хуже, мы отдаляемся»",[["Открыто обсудить, а если не поможет, пойти к врачу",1],["Подождать, с возрастом всё всегда выравнивается",0],["Это болезнь, надо срочно лечить таблетками",0]],"Часто причина в потере доверия и эмоционального комфорта. Сама по себе дисгармония не болезнь."],
+["Пара: «В какое время года лучше зачать ребёнка?»",[["Осенью или зимой, тогда меньше риск мутаций",1],["Весной или летом, когда много витаминов",0],["Без разницы, главное самочувствие пары",0]],"Осенью и зимой ниже процент спонтанных мутаций и риск иммунного конфликта."]
+];
+const MN=["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"];
 
-/* Викторина */
-let qs,qi,qscore,qdone;
-function startQuiz(){qs=shuffle(Q);qi=0;qscore=0;showQ()}
-function showQ(){
- const el=$("#quiz");
- if(qi>=qs.length){
-  const p=Math.round(qscore/qs.length*100);
-  el.innerHTML=`<h2>Результат: ${qscore} из ${qs.length} (${p}%)</h2><p class="big">${p>=85?"Отлично, тема усвоена.":p>=60?"Хорошо, повторите пункты, где были ошибки.":"Стоит перечитать презентацию и пройти ещё раз."}</p><button class="primary" id="again">Пройти заново</button>`;
-  $("#again").onclick=startQuiz;return;
- }
- const [q,o,c]=qs[qi];qdone=false;
- const order=shuffle(o.map((t,i)=>i));
- el.innerHTML=`<div class="bar"><i style="width:${qi/qs.length*100}%"></i></div><p>Вопрос ${qi+1} из ${qs.length}</p><h2>${esc(q)}</h2>`+
- order.map(i=>`<button class="opt" data-i="${i}">${esc(o[i])}</button>`).join("")+`<div id="fb"></div>`;
- el.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
-  if(qdone)return;qdone=true;const i=+b.dataset.i;
-  el.querySelectorAll(".opt").forEach(x=>{if(+x.dataset.i===c)x.classList.add("right")});
-  if(i===c)qscore++;else b.classList.add("wrong");
-  $("#fb").innerHTML=`<div class="note">${esc(qs[qi][3])}</div><p><button class="primary" id="nx">${qi+1<qs.length?"Дальше":"Показать результат"}</button></p>`;
-  $("#nx").onclick=()=>{qi++;showQ()};
- });
+const GM=[["Перетягивание каната","Для двоих или двух команд на одном телефоне"],["Врач на приёме","Пациенты с жалобами, 20 секунд на совет"],["Разрушитель мифов","Свайп: факт или миф, серия даёт множитель"],["Календарь семьи","Расставь решения по месяцам"]];
+function menu(){app.innerHTML='<h1>Тема 9: игры 3</h1><p class="sub">Четыре игры по слайдам.</p>'+GM.map((m,k)=>'<button class="mode" data-a="g" data-v="'+k+'"><b>'+m[0]+'</b><span>'+m[1]+'</span></button>').join("");}
+
+function dnd(sel,cb){
+  document.querySelectorAll(sel).forEach(el=>{
+    let sx=0,sy=0,on=false;
+    el.addEventListener("pointerdown",e=>{sx=e.clientX;sy=e.clientY;on=true;el.setPointerCapture(e.pointerId);el.classList.add("drag");});
+    el.addEventListener("pointermove",e=>{if(on)el.style.transform="translate("+(e.clientX-sx)+"px,"+(e.clientY-sy)+"px)";});
+    const up=e=>{
+      if(!on)return;on=false;el.classList.remove("drag");
+      const dx=e.clientX-sx,dy=e.clientY-sy,tap=Math.hypot(dx,dy)<8;
+      el.style.visibility="hidden";const t=document.elementFromPoint(e.clientX,e.clientY);el.style.visibility="";
+      el.style.transform="";cb(el,t&&t.closest("[data-drop]"),dx,tap);
+    };
+    el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);
+  });
 }
-startQuiz();
+const fx=(txt,col)=>{const s=document.createElement("div");s.className="stamp";s.textContent=txt;s.style.color=col;document.body.appendChild(s);setTimeout(()=>s.remove(),750);};
+const boom=(n,em)=>{for(let i=0;i<n;i++){const s=document.createElement("div");s.className="cf";s.textContent=em;s.style.left="50%";s.style.top="45%";s.style.setProperty("--x",(Math.random()*300-150)+"px");s.style.setProperty("--y",(Math.random()*300-220)+"px");document.body.appendChild(s);setTimeout(()=>s.remove(),950);}};
+const PT=["👩","👩‍🍼","👫","🤒","👦","👩‍👧","👫","👫"];
 
-/* Калькулятор */
-$("#calcBtn").onclick=()=>{
- const v=id=>parseFloat($("#"+id).value)||0;
- const age=v("age"),minor=age<18;
- const rows=[];
- const chk=(name,val,lo,hi,unit,norm)=>{
-  const s=val<lo?["s-low","Ниже нормы"]:(hi&&val>hi?["s-hi","Выше нормы"]:["s-ok","В норме"]);
-  rows.push(`<tr><td>${name}</td><td>${val} ${unit}</td><td>${norm}</td><td class="${s[0]}">${s[1]}</td></tr>`);
-  return val>=lo&&(!hi||val<=hi);
- };
- let ok=0,n=0;
- const add=r=>{n++;if(r)ok++};
- add(minor?chk("Сон",v("sleep"),8,10,"ч","8–10 ч (до 18 лет)"):chk("Сон",v("sleep"),7,8,"ч","7–8 ч"));
- add(chk("Вода",v("water"),1.5,2,"л","1,5–2 л"));
- add(minor?chk("Активность",v("act"),420,0,"мин/нед","60 мин в день (≈420 мин/нед)"):chk("Активность",v("act"),150,0,"мин/нед","≥150 мин/нед"));
- add(chk("Шаги",v("steps"),8000,10000,"","8 000–10 000"));
- add(chk("Силовые",v("str"),2,3,"дн/нед","2–3 дня"));
- const br=$("#breaks").value==="1";n++;if(br)ok++;
- rows.push(`<tr><td>Перерывы</td><td>${br?"Да":"Нет"}</td><td>каждые 2 ч</td><td class="${br?"s-ok":"s-low"}">${br?"В норме":"Ниже нормы"}</td></tr>`);
- const fix=[];
- if(v("sleep")<(minor?8:7))fix.push("добавьте сон, ложитесь на 30–60 минут раньше");
- if(v("water")<1.5)fix.push("держите бутылку воды рядом и пейте в течение дня");
- if(v("act")<(minor?420:150))fix.push("добавьте ежедневную прогулку или зарядку");
- if(v("steps")<8000)fix.push("ходите пешком часть маршрута");
- if(v("str")<2)fix.push("введите 2–3 силовые тренировки в неделю");
- if(!br)fix.push("каждые 2 часа вставайте и делайте лёгкие упражнения");
- $("#calcOut").innerHTML=`<h2>${ok} из ${n} показателей в норме</h2><div class="table-wrap"><table><tr><th>Показатель</th><th>У вас</th><th>Норма</th><th>Итог</th></tr>${rows.join("")}</table></div>`+
- (fix.length?`<div class="note"><b>Что улучшить:</b><br>${fix.map(esc).join(";<br>")}.</div>`:`<div class="note">Все показатели в норме. Сохраняйте режим.</div>`)+
- `<div class="note">Нормы взяты из презентации (для взрослых). Для возраста до 18 лет сон и активность скорректированы по рекомендациям ВОЗ. Это учебный расчёт, а не медицинская оценка.</div>`;
-};
+/* 1. Канат */
+function tug(){
+  let Q=shuf(NUM.slice()),i=0,pos=0,turn=0,lock=false;
+  const pl=()=>{const f=(pos+4)/8*100;return[Math.max(10,f-12),f,Math.min(90,f+12)];};
+  const place=()=>{const L=pl();$("#p1").style.left=L[0]+"%";$("#fl").style.left=L[1]+"%";$("#p2").style.left=L[2]+"%";};
+  const draw=()=>{
+    lock=false;if(i>=Q.length){Q=shuf(NUM.slice());i=0;}
+    const q=Q[i],o=shuf(q[1].map((t,k)=>[t,k])),L=pl();
+    app.innerHTML=bar(0,"Канат")+'<div class="rp dz" data-drop="1"><div class="ln"></div><div class="tm" id="p1" style="left:'+L[0]+'%">🏋️</div><div class="fl" id="fl" style="left:'+L[1]+'%">🚩</div><div class="tm" id="p2" style="left:'+L[2]+'%">🏋️‍♀️</div></div>'+
+    '<div class="top"><span>Команда 1</span><span>Команда 2</span></div><div class="turn" style="background:var('+(turn?"--ac2":"--ac")+')">Отвечает команда '+(turn+1)+'</div>'+
+    '<p class="q">'+q[0]+'</p><p class="hint">Перетащи ответ на канат или нажми на него.</p>'+
+    o.map(([t,k])=>'<div class="chp dr" data-v="'+k+'">'+t+'</div>').join("")+'<div id="fb"></div>';
+    dnd(".chp",(el,z,dx,tap)=>{if(z||tap)A.tk(el.dataset.v,el);});
+  };
+  A.tk=(k,b)=>{
+    if(lock)return;lock=true;const q=Q[i],ok=+k===q[2];
+    document.querySelectorAll(".chp").forEach(x=>{if(+x.dataset.v===q[2])x.classList.add("ok");});
+    if(!ok)b.classList.add("bad");
+    pos+=(ok?1:-1)*(turn?1:-1);place();if(ok)boom(6,"💪");
+    const w=pos<=-4?1:pos>=4?2:0;
+    $("#fb").innerHTML='<div class="note '+(ok?"g":"r")+'"><b>'+(ok?"Верно, канат к вам.":"Неверно, канат к соперникам.")+'</b> '+(q[3]||"")+'</div><button class="next" data-a="tn">'+(w?"Итог":"Дальше")+'</button>';
+    A.tn=()=>{if(w)return fin("Победила команда "+w,"Канат дотянут до края.",0);i++;turn^=1;draw();};
+  };
+  draw();
+}
 
-/* Игра */
-const names=()=>{const n=+$("#nt").value;$("#names").innerHTML=Array.from({length:n},(_,i)=>`<label for="tn${i}">Команда ${i+1}</label><input id="tn${i}" value="Команда ${i+1}" maxlength="20">`).join("")};
-$("#nt").onchange=names;names();
-let G;
-$("#startGame").onclick=()=>{
- const n=+$("#nt").value,r=+$("#rounds").value;
- G={teams:Array.from({length:n},(_,i)=>({name:$("#tn"+i).value.trim()||"Команда "+(i+1),score:0})),
-  sec:+$("#sec").value,total:n*r,turn:0,pool:[],t:null,left:0};
- $("#setup").classList.add("hidden");$("#play").classList.remove("hidden");nextTurn();
-};
-function renderBoard(){
- $("#board").innerHTML=G.teams.map((t,i)=>`<div class="team ${i===G.turn%G.teams.length&&G.turn<G.total?"act":""}"><span>${esc(t.name)}</span><b>${t.score}</b></div>`).join("");
+/* 2. Врач */
+function doc(){
+  const Q=shuf(CS.slice());let i=0,rep=50,ok=0,left=20,tm,lock=false;
+  const ans=k=>{
+    if(lock)return;lock=true;clearInterval(tm);
+    const c=Q[i],good=k>=0&&c[1][k][1]===1;
+    rep=clamp(rep+(good?12:-15));if(good)ok++;
+    document.querySelectorAll(".chp").forEach(x=>{const j=+x.dataset.v;if(c[1][j][1]===1)x.classList.add("ok");else if(j===k)x.classList.add("bad");});
+    $("#rp").style.width=rep+"%";$("#pt").className="pt "+(good?"g":"r");$("#pf").textContent=good?"😊":"😠";
+    if(good)boom(8,"✨");
+    const end=rep<=0||i+1>=Q.length;
+    $("#fb").innerHTML='<div class="note '+(good?"g":"r")+'"><b>'+(good?"Верный совет.":k<0?"Время вышло.":"Неверный совет.")+'</b> '+c[2]+'</div><button class="next" data-a="dn">'+(end?"Итог":"Следующий пациент")+'</button>';
+  };
+  const draw=()=>{
+    lock=false;left=20;const c=Q[i],o=shuf(c[1].map((x,k)=>[x[0],k]));
+    app.innerHTML=bar(0,"Пациент "+(i+1)+" из "+Q.length)+'<div class="hint">Репутация клиники</div><div class="bar"><i id="rp" style="width:'+rep+'%;background:var(--ok)"></i></div>'+
+    '<div class="scn dz" data-drop="1"><div class="pt" id="pt" style="--p:100"><span id="pf">'+PT[CS.indexOf(c)]+'</span></div><div class="bub">'+c[0]+'</div></div>'+
+    '<p class="hint">Перетащи совет на пациента или нажми на него. Время идёт по кольцу.</p>'+
+    o.map(([t,k])=>'<div class="chp dr" data-v="'+k+'">'+t+'</div>').join("")+'<div id="fb"></div>';
+    dnd(".chp",(el,z,dx,tap)=>{if(z||tap)ans(+el.dataset.v);});
+    clearInterval(tm);tm=setInterval(()=>{left-=.1;const p=$("#pt");if(p)p.style.setProperty("--p",Math.max(0,left/20*100));if(left<=0)ans(-1);},100);
+  };
+  A.dn=()=>{
+    if(rep<=0)return fin("Клиника закрыта","Репутация упала до нуля. Верных советов: "+ok+" из "+(i+1)+".",1);
+    i++;if(i>=Q.length)return fin(ok+" из "+Q.length,rep>=70?"Отличный врач, репутация клиники "+rep+"%.":"Репутация клиники "+rep+"%. Повтори слайды и попробуй снова.",1);
+    draw();
+  };
+  stop=()=>clearInterval(tm);
+  draw();
 }
-function nextTurn(){
- clearInterval(G.t);renderBoard();
- if(G.turn>=G.total){
-  const max=Math.max(...G.teams.map(t=>t.score)),w=G.teams.filter(t=>t.score===max).map(t=>esc(t.name)).join(", ");
-  $("#gq").innerHTML=`<h2>Игра окончена</h2><p class="big">Победитель: <b>${w}</b> (${max} б.)</p><button class="primary" id="re">Новая игра</button>`;
-  $("#re").onclick=()=>{$("#play").classList.add("hidden");$("#setup").classList.remove("hidden")};return;
- }
- if(!G.pool.length)G.pool=shuffle(Q);
- const q=G.pool.pop(),team=G.teams[G.turn%G.teams.length];
- const order=shuffle(q[1].map((t,i)=>i));let done=false;G.left=G.sec;
- $("#gq").innerHTML=`<div class="timer" id="tm">${G.left}</div><p>Отвечает: <b>${esc(team.name)}</b></p><h2>${esc(q[0])}</h2>`+
- order.map(i=>`<button class="opt" data-i="${i}">${esc(q[1][i])}</button>`).join("")+`<div id="gf"></div>`;
- const finish=(i)=>{
-  if(done)return;done=true;clearInterval(G.t);
-  document.querySelectorAll("#gq .opt").forEach(x=>{if(+x.dataset.i===q[2])x.classList.add("right")});
-  let msg;
-  if(i===q[2]){const pts=1+(G.left>=G.sec/2?1:0);team.score+=pts;msg=`Верно, +${pts} ${pts===2?"(быстрый ответ)":""}`}
-  else{if(i>=0)document.querySelector(`#gq .opt[data-i="${i}"]`).classList.add("wrong");msg=i<0?"Время вышло, 0 баллов":"Неверно, 0 баллов"}
-  renderBoard();
-  $("#gf").innerHTML=`<div class="note"><b>${msg}</b><br>${esc(q[3])}</div><p><button class="primary" id="gn">Следующая команда</button></p>`;
-  $("#gn").onclick=()=>{G.turn++;nextTurn()};
- };
- document.querySelectorAll("#gq .opt").forEach(b=>b.onclick=()=>finish(+b.dataset.i));
- G.t=setInterval(()=>{G.left--;const tm=$("#tm");if(tm)tm.textContent=G.left;if(G.left<=0)finish(-1)},1000);
+
+/* 3. Мифы */
+function myth(){
+  let Q=shuf(TF.slice()),i=0,t=45,sc=0,st=0,best=0,iv,over=false,msg="Тащи карточку в корзину или нажми на корзину.",mc="";
+  const mult=()=>1+Math.min(4,Math.floor(st/3));
+  const hud=()=>{const h=$("#hud");if(h)h.textContent="Очки "+sc+", серия x"+mult()+", "+t+" с";};
+  const end=()=>{if(over)return;over=true;clearInterval(iv);fin(sc+" очков","Лучшая серия: "+best+" подряд.",2);};
+  const ans=f=>{
+    if(over)return;const q=Q[i],ok=f===!!q[1],m0=mult();
+    if(ok){sc+=10*mult();st++;best=Math.max(best,st);msg="Верно. "+q[2];mc="g";fx("ВЕРНО","var(--ok)");const up=mult()>m0;boom(up?18:5,up?"🔥":"✨");}
+    else{st=0;t=Math.max(0,t-3);msg="Неверно, это "+(q[1]?"факт":"миф")+". "+q[2]+" (минус 3 секунды)";mc="r";fx("МИМО","var(--bad)");}
+    i++;draw();if(t<=0)end();
+  };
+  const draw=()=>{
+    if(i>=Q.length){Q=shuf(TF.slice());i=0;}
+    app.innerHTML=bar(0,"hud")+'<div class="bk" style="margin-top:10px"><div class="dz" data-drop="0" data-a="mf" data-v="0" style="border-color:var(--bad)">← МИФ</div><div class="dz" data-drop="1" data-a="mf" data-v="1" style="border-color:var(--ok)">ФАКТ →</div></div>'+
+    '<div class="card dr" id="cd">'+Q[i][0]+'</div><div class="note '+mc+'">'+msg+'</div>';
+    hud();
+    dnd(".card",(el,z,dx,tap)=>{if(tap)return;const f=z?z.dataset.drop==="1":(Math.abs(dx)>90?dx>0:null);if(f!==null)ans(f);});
+  };
+  A.mf=v=>ans(v==="1");
+  iv=setInterval(()=>{t--;hud();if(t<=0)end();},1000);
+  stop=()=>clearInterval(iv);
+  draw();
 }
+
+/* 4. Календарь */
+function cal(){
+  let s=0,c=0,pts=0,lock=false;
+  const TK=["👶","🚭","👶"];
+  const draw=()=>{
+    lock=false;
+    const tx=s===0?"Перетащи 👶 на месяц зачатия.":s===1?"Зачатие в месяце «"+MN[c]+"». Перетащи 🚭 на месяц, когда пара полностью бросает привычки (можно прошлый год).":"Оба супруга перенесли острую инфекцию 🦠 в ноябре. Перетащи 👶 на месяц нового зачатия.";
+    app.innerHTML=bar(0,"Шаг "+(s+1)+" из 3")+'<p class="q">'+tx+'</p><div class="wh">'+
+    MN.map((m,k)=>{const a=k/12*2*Math.PI-Math.PI/2;return '<button data-drop="1" data-a="mo" data-v="'+k+'" style="left:'+(50+40*Math.cos(a))+'%;top:'+(50+40*Math.sin(a))+'%">'+m+(s===1&&k===c?"<br>👶":s===2&&k===10?"<br>🦠":"")+'</button>';}).join("")+
+    '<div class="ct"><div class="tok dr" id="tk">'+TK[s]+'</div><span>тащи на месяц</span></div></div><div id="fb"></div>';
+    dnd("#tk",(el,z)=>{if(z&&z.dataset.v!==undefined)A.mo(z.dataset.v,z);});
+  };
+  A.mo=(v,b)=>{
+    if(lock)return;lock=true;const m=+v,ideal=m>=8||m<=1;let p,msg,w=[];
+    if(s===0){c=m;if(ideal){p=2;msg="Верно: осенью и зимой ниже процент спонтанных мутаций и риск иммунного конфликта.";}else{p=0;msg="Лучше осенью или зимой: ниже процент спонтанных мутаций и риск иммунного конфликта.";}}
+    else if(s===1){w=[(c+11)%12,(c+10)%12];if((c-m+12)%12>=2){p=2;msg="Верно: отказаться нужно не позже чем за 2 месяца до беременности.";}else{p=0;msg="Поздно: отказаться нужно не позже чем за 2 месяца до беременности.";}}
+    else{w=[11,0];const d=(m-10+12)%12;if(d<2){p=0;msg="Рано: после острой инфекции зачатие допустимо не менее чем через 2 месяца.";}else if(ideal){p=2;msg="Верно: прошло 2 месяца и больше, и это осень или зима.";}else{p=1;msg="Допустимо, но осенью и зимой благоприятнее.";}}
+    pts+=p;b.classList.add(p?"ok":"bad");if(p===2)boom(10,"✨");
+    document.querySelectorAll(".wh button").forEach(x=>{if(w.includes(+x.dataset.v))x.classList.add("win");});
+    $("#fb").innerHTML='<div class="note '+(p?"g":"r")+'">'+msg+(w.length?" Оранжевым выделены 2 месяца ожидания.":"")+'</div><button class="next" data-a="cn">'+(s<2?"Дальше":"Итог")+'</button>';
+  };
+  A.cn=()=>{if(s<2){s++;draw();}else fin(pts+" из 6",pts>=5?"Семейный календарь составлен грамотно.":"Перечитай слайды про планирование семьи и попробуй ещё.",3);};
+  draw();
+}
+const FN=[tug,doc,myth,cal];
+menu();
 </script>
 </body>
 </html>
